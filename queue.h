@@ -1,27 +1,27 @@
 #ifndef _queue_h_
 #define _queue_h_
+
 #include <iostream>
 
-
-class Queue{
+template <typename T>
+class Queue {
 public:
-	Queue(int size);
+	Queue(size_t size);
 	bool is_full();
 	bool is_empty();
-	void enqueue(int x);
-	int dequeue();
-	int get_next(int x);
+	void enqueue(T x);
+	T dequeue();
+	int get_next_index(int x);
 	void print();
-	void print_len();
+	size_t get_length();
+	void print_length();
 	void clear();
 
-
 private:
-	int* queue;
-	int capacity;
+	T* queue;
+	size_t capacity;
 	int head;
 	int tail;
-
 };
 
 #endif
