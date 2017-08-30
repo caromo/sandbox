@@ -1,75 +1,126 @@
 #include "queue.h"
+#include <assert.h>
+#include <cstdio>
 
-Queue::Queue(int size) {
+template <typename T>
+Queue<T>::Queue(size_t size) {
 	queue = 0;
-	queue = new int[size+1];
-	for (int i = 0; i<=size; i++) {
+	queue = new T[size + 1];
+
+	// don't need to do this bc `enqueue` gives us elements to fill the array with.
+	/*for (int i = 0; i<=size; i++) {
 		queue[i] = 0;
-	}
+	}*/
 	capacity = size;
 	head = 0;
 	tail = 0;
 }
-bool Queue::is_empty() {
-	if (head == tail) {
-		return true;
-	} else return false;
+
+template <typename T>
+bool Queue<T>::is_empty() {
+	return head == tail;
 }
-bool Queue::is_full() {
-	if (head == get_next(tail)) {
-		return true;
-	} else return false;
+
+template <typename T>
+bool Queue<T>::is_full() {
+	return head == get_next_index(tail);
 }
-int Queue::get_next(int x) {
-	if (x+1 < capacity) {
-		return x+1;
-	} else return 0;
+
+template <typename T>
+int Queue<T>::get_next_index(int x) {
+	if (x + 1 < capacity) {
+		return x + 1;
+	}
+	return 0;
 }
-void Queue::enqueue(int x) {
+
+template <typename T>
+void Queue<T>::enqueue(T x) {
 	if (!is_full()) {
 		queue[tail] = x;
-		tail = get_next(tail);
-	} else std::cout << "Queue is full\n"; 
-}
-int Queue::dequeue() {
-	if (!is_empty()) {
-		int value = queue[head];
-		queue[head] = 0;
-		head = get_next(head);
-		return value;
+		tail = get_next_index(tail);
 	} else {
+		std::cout << "Queue is full\n";
+	}
+}
+
+template <typename T>
+T Queue<T>::dequeue() {
+	if (is_empty()) {
 		std::cout << "Queue is empty\n";
 		return 0;
 	}
-}
-void Queue::print() {
-	if (!is_empty()) {
-		for (int i = 0; i <= capacity; i++) {
-			std::cout << queue[i] << " ";
-		}
-		std::cout << "\n";
-	} else std::cout << "Queue is empty\n";
-}
-void Queue::print_len(){
 
+	T value = queue[head];
+	queue[head] = 0;
+	head = get_next_index(head);
+	return value;
 }
-void Queue::clear() {
+
+template <typename T>
+void Queue<T>::print() {
+	if (is_empty()) {
+		std::cout << "Queue is empty\n";
+		return;
+	}
+
+	// must print elements in order they were added
+	for (size_t i = head; i != tail; i = get_next_index(i)) {
+		std::cout << queue[i] << " ";
+	}
+	std::cout << "\n";
+}
+
+template <typename T>
+size_t Queue<T>::get_length() {
+	if (tail >= head) {
+		return tail - head;
+	}
+	return tail + 1 + (capacity - head); // array size = 1 + capacity
+}
+
+template <typename T>
+void Queue<T>::print_length() {
+	std::cout << get_length() << std::endl;
+}
+
+template <typename T>
+void Queue<T>::clear() {
 	queue = 0;
 }
 
+// one other suggestion i might make is to make the "print" methods return 
+// strings. that might make the messages easier to test. you could test them
+// using `assert` calls similar to those below. 
+// alternatively, you could create a method that:
+// would return an in-order iterator to the elements in the queue. one thing to
+// keep in mind is that this must be a `const` iterator so that the callee
+// can't modify the contents of the queue. ALSO, i think some might argue that
+// this would break the encapsulation of the queue because you can access
+// elements without calling `dequeue`. i do not necessarily agree with this,
+// but for dave's sake i would not create such an iterator.
+
 int main() {
-	Queue test(3);
+	Queue<int> test(3);
+
 	test.enqueue(1);
 	test.print();
 	test.enqueue(2);
 	test.print();
-	test.dequeue();
+	assert(test.get_length() == 2); // `assert` is useful for unit tests
+
+	assert(test.dequeue() == 1);
+	assert(test.get_length() == 1);
+
 	test.print();
 	test.enqueue(3);
 	test.print();
 	test.enqueue(8);
+	assert(test.get_length() == 3);
+
 	test.print();
 	test.enqueue(69);
 	test.print();
+	assert(test.get_length() == 3);
 	return 0;
 }
