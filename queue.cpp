@@ -21,7 +21,7 @@ bool Queue::is_full() {
 	} else return false;
 }
 int Queue::get_next(int x) {
-	if (x+1 < capacity) {
+	if (x+1 <= capacity) {
 		return x+1;
 	} else return 0;
 }
@@ -47,7 +47,7 @@ void Queue::print() {
 		for (int i = 0; i <= capacity; i++) {
 			std::cout << queue[i] << " ";
 		}
-		std::cout << "\n";
+		std::cout << "Head " << head << " Tail " << tail << "\n";
 	} else std::cout << "Queue is empty\n";
 }
 void Queue::print_len(){
@@ -68,6 +68,8 @@ int main() {
 	test.enqueue(3);
 	test.print();
 	test.enqueue(8);
+	test.print();
+	test.dequeue();
 	test.print();
 	test.enqueue(69);
 	test.print();
