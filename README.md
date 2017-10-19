@@ -1,7 +1,2 @@
-# ayy-lmao
-sandbox
-ayy
-l
-m
-a
-o
+# sandbox
+sandbox for misc.
